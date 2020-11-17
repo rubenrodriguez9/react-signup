@@ -9,7 +9,11 @@ import validator from "validator"
     isAuth: false,
     email: "",
     password: "",
-    isError: false
+    isError: false,
+    isPasswordError: false,
+    isPasswordErrorMessage: '',
+    isSubmitError: false,
+    isSubmitErrorMessage: ""
   }
 
   handleEmailOnChange = (event) => {
@@ -17,27 +21,44 @@ import validator from "validator"
     
     
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     })
-
     let isEmail = validator.isEmail(this.state.email)
-      if(!isEmail){
-        this.setState({
-          isError: true
-        })
-      } else this.setState({
-        isError: false
-      })
-      console.log(this.state.isError);
-  }
+    
+    if(!isEmail) {this.setState({
+      isError: true
+    })
+  } else this.setState({
+      isError: false
+    })
+    
 
+  }
   handlePasswordOnChange = (event) => {
 
     
    
     this.setState({
       [event.target.name]: event.target.value
+      
     })
+
+    const {password } = this.state
+
+    let isPassword = validator.matches(password, "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
+
+      if(isPassword){
+        this.setState({
+          isPasswordError: false,
+          isPasswordErrorMessage: ""
+        })
+
+      } else {
+        this.setState({
+          isPasswordError: true,
+          isPasswordErrorMessage: "Password must contain one uppercase, one lowercase, one special character, and one of the symbols"
+        })
+      }
 
     
   }
@@ -46,12 +67,49 @@ import validator from "validator"
 
   handleOnSubmit =  (event) => {
     event.preventDefault()
-    console.log(this.state);
+    const{password, email} = this.state;
+
+
+    if(validator.isEmpty(email) && validator.isEmpty(password)) {
+      this.setState({
+        isSubmitError: true,
+        isSubmitErrorMessage: "Cannot have an empty email and password"
+      }) 
+    
+      return
+    
+    } else {this.setState({
+      isSubmitError: false,
+      isSubmitErrorMessage: ""
+    }) }
+
+    
+    if(validator.isEmpty(email)){
+      this.setState({
+        isSubmitError: true,
+        isSubmitErrorMessage: "Cannot have an empty email"
+      })
+    } else  this.setState({
+      isSubmitError: false,
+      isSubmitErrorMessage: ""
+    })
+
+    if(validator.isEmpty(password)){
+      this.setState({
+        isSubmitError: true,
+        isSubmitErrorMessage: "Cannot have an empty password"
+      })
+    } else  this.setState({
+      isSubmitError: false,
+      isSubmitErrorMessage: ""
+    })
+    
+    
   }
 
   render() {
 
-    const { isAuth, isError } = this.state
+    const { isAuth, isError , isPasswordError, isPasswordErrorMessage, isSubmitError, isSubmitErrorMessage} = this.state
 
     let showTodoComponnent = isAuth ? (<Todo />  
       ):( 
@@ -60,10 +118,14 @@ import validator from "validator"
       <div>
         {isError ? <div> Please enter a correct email</div> : ""}
       </div>
+      <div>
+        {isSubmitError ? <div> {isSubmitErrorMessage}</div> : ""}
+      </div>
+
      <input type="text" name="email" placeholder="Email"  
      value={this.state.email} 
      onChange={(event) => this.handleEmailOnChange(event)} 
-     /> <br/> 
+      /> <br/> {isPasswordError ? <div>{isPasswordErrorMessage}</div> : ""}
 
      <input type="password" placeholder="Password" name="password" value={this.state.password} 
      onChange={(event) =>  this.handlePasswordOnChange(event)} 
