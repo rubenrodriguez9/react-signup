@@ -13,9 +13,14 @@ let log = console.log
     isAuth: false,
     email: "",
     password: "",
+    message: "",
     isError: false,
     isSubmitError: false,
     isSubmitErrorMessage: "",
+    passwordErrorMessage: false,
+    usernameErrorMessage: false
+
+
     
   }
 
@@ -25,7 +30,9 @@ let log = console.log
     
     this.setState({
       [event.target.name]: event.target.value,
-      isSubmitErrorMessage: false
+      isSubmitErrorMessage: false,
+      passwordErrorMessage: false,
+      usernameErrorMessage: false
     })
     let isEmail = validator.isEmail(this.state.email)
     
@@ -101,10 +108,10 @@ let log = console.log
     
      let success = await axios.post('http://localhost:3000/api/users/sign-in', {email: this.state.email, password: this.state.password})
      
-    
+    log(success)
 
+      localStorage.setItem("jwtToken", success.data.jwtToken)
 
-console.log(success)
     
     }
     
@@ -112,9 +119,21 @@ console.log(success)
       
       
         console.log(e.response)
+      
+        if(e.response.status === 404){
+          this.setState({
+            usernameErrorMessage: true,
+            message: "User not found"
+          })
+        }
 
+       if(e.response.status === 401){
+         this.setState({
+          passwordErrorMessage: true,
+          message: "Incorrect Password"
 
-       
+         })
+       }
 
 
     
@@ -141,11 +160,14 @@ console.log(success)
         {isSubmitError ? <Message className="error-message" message={this.state.isSubmitErrorMessage}/>: ""}
       </div>
       <div>{signUpMessage? <div style={{color: "blue"}}>You have successfully signed up!</div>: ""}</div>
-
+      {this.state.passwordErrorMessage ? <div style={{color: "red"}} > {this.state.message} </div> : null}
+      {this.state.usernameErrorMessage ? <div style={{color: "red"}} > {this.state.message} </div> : null}
      <input type="text" name="email" placeholder="Email"  
      value={this.state.email} 
      onChange={(event) => this.handleEmailOnChange(event)} 
       /> <br/> 
+
+      
 
      <input type="text" placeholder="Password" name="password" value={this.state.password} 
      onChange={(event) =>  this.handlePasswordOnChange(event)} 

@@ -27,6 +27,7 @@ import "./Signup.css"
     
     this.setState({
       [event.target.name]: event.target.value,
+     isSubmitError: false
     })
     let isEmail = validator.isEmail(this.state.email)
     
@@ -118,24 +119,23 @@ import "./Signup.css"
     console.log(success);
     }
     catch (e){
-      
-      if(e && e.response.status === 409){
-        console.log(e);
+      if(e.response.status === 404){
         this.setState({
-          isSubmitError: true,
-          isSubmitErrorMessage: e.response.data.message,
+          isSubmitError: true
+
         })
+      }
 
 
 
     
-      
+    
       
     }
   }
 
-
-  }
+ 
+  
 
   render() {
 
