@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
 
 import validator from "validator"
-import Todo from "../Todo/Todo"
-
+import jwtDecode from "jwt-decode"
 import Message from "../shared/Message"
 import axios from "axios"
 import "./Signin.css"
+
+
 let log = console.log
  class Signin extends Component {
 
   state ={
-    isAuth: false,
     email: "",
     password: "",
     message: "",
@@ -22,6 +22,11 @@ let log = console.log
 
 
     
+  }
+
+  componentDidMount() {
+    let token = localStorage.getItem("jwtToken")
+    log(token)
   }
 
   handleEmailOnChange = (event) => {
@@ -111,6 +116,9 @@ let log = console.log
     log(success)
 
       localStorage.setItem("jwtToken", success.data.jwtToken)
+      this.setState({
+        isAuth:true
+      })
 
     
     }
@@ -147,11 +155,11 @@ let log = console.log
 
   render() {
 
-    const { isAuth, isError ,   isSubmitError, signUpMessage} = this.state
+    const {isError ,   isSubmitError, signUpMessage} = this.state
 
-    let showTodoComponnent = isAuth ? (<Todo />  
-      ):( 
+    
       
+    let showTodoComponnent = 
     <form onSubmit={this.handleOnSubmit}>
       <div>
         {isError ? <div> Please enter a correct email</div> : ""}
@@ -174,7 +182,7 @@ let log = console.log
      />  <br/>
 
      <button>Sign in</button>
-    </form>);
+    </form>;
    
 
     return (

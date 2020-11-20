@@ -5,15 +5,9 @@ import {Link} from "react-router-dom"
     render() {
         return (
             <div>
-                <ul>
-                    <li>
-                        <Link to="/sign-in">Sign in</Link>
-                    </li>
 
-                    <li>
-                        <Link to="/sign-up"> Register </Link>
-                    </li>
-                </ul>
+               The greatest todo app on the planet. Sign up 
+               <Link to="/sign-up" > here</Link>
                 
             </div>
         )
